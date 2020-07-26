@@ -10,12 +10,12 @@ import (
 )
 
 func main() {
-	bot, username, err := newRedditBot()
+	bot, err := newRedditBot()
 	if err != nil {
 		log.Fatalln("Failed to create bot handle: ", err)
 	}
 
-	handler := newDeogracias(bot, username)
+	handler := newDeogracias(bot)
 	cfg := graw.Config{
 		Subreddits:     []string{"flexicondev", os.Getenv("SUBREDDITS")},
 		CommentReplies: true,
@@ -30,19 +30,15 @@ func main() {
 	log.Fatalln(wait())
 }
 
-func newRedditBot() (reddit.Bot, string, error) {
-	username := os.Getenv("CLIENT_USERNAME")
-
-	bot, err := reddit.NewBot(reddit.BotConfig{
+func newRedditBot() (reddit.Bot, error) {
+	return reddit.NewBot(reddit.BotConfig{
 		Agent: os.Getenv("USER_AGENT"),
 		App: reddit.App{
 			ID:       os.Getenv("CLIENT_ID"),
 			Secret:   os.Getenv("CLIENT_SECRET"),
-			Username: username,
+			Username: os.Getenv("CLIENT_USERNAME"),
 			Password: os.Getenv("CLIENT_PASSWORD"),
 		},
 		Rate: 0,
 	})
-
-	return bot, username, err
 }
